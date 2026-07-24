@@ -1,115 +1,391 @@
-# IT Failure Analyzer - Backend
+# Log Analyzer Backend 🚀
 
-Backend dla aplikacji SaaS do analizy awarii systemów IT wykorzystującej sztuczną inteligencję.
+AI-powered IT failure log analyzer with automated remediation capabilities using OpenAI GPT-4.
 
-## Wymagania
+## 📋 Features
 
-- Node.js >= 18.0.0
+- ✅ **User Management** - Registration, authentication, JWT tokens
+- ✅ **Log Upload** - Support for .txt, .log, .json files
+- ✅ **AI Analysis** - OpenAI GPT-4 integration for log analysis
+- ✅ **Problem Detection** - Automatic detection of issues in logs
+- ✅ **Root Cause Analysis** - AI-powered root cause identification
+- ✅ **Remediation Actions** - Proposed automated fixes
+- ✅ **PDF Reports** - Generate detailed analysis reports
+- ✅ **Audit Logging** - Complete action audit trail
+- ✅ **Rate Limiting** - Protection against abuse
+- ✅ **Error Handling** - Comprehensive error management
+- ✅ **Security** - Helmet, CORS, input validation
+
+## 🛠 Tech Stack
+
+- **Runtime**: Node.js
+- **Language**: TypeScript
+- **Framework**: Express.js
+- **Database**: PostgreSQL + TypeORM
+- **Authentication**: JWT (jsonwebtoken)
+- **AI**: OpenAI API (GPT-4)
+- **Validation**: Joi
+- **Logging**: Winston
+- **Security**: Helmet, bcryptjs, express-rate-limit
+- **PDF Generation**: PDFKit
+
+## 📦 Project Structure
+
+```
+backend/
+├── src/
+│   ├── config/           # Configuration files
+│   │   ├── env.ts       # Environment variables
+│   │   ├── database.ts  # TypeORM database config
+│   │   └── openai.ts    # OpenAI configuration
+│   ├── models/          # TypeORM entities
+│   ├── repositories/    # Data access layer
+│   ├── services/        # Business logic
+│   ├── controllers/     # Request handlers
+│   ├── middleware/      # Express middleware
+│   ├── routes/          # API routes
+│   ├── utils/           # Utilities
+│   ├── app.ts          # Express app setup
+│   └── server.ts       # Server entry point
+├── dist/                # Compiled JavaScript
+├── package.json
+├── tsconfig.json
+└── .env.example
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js >= 16.0.0
+- npm >= 8.0.0
 - PostgreSQL >= 12
-- npm lub yarn
+- OpenAI API key
 
-## Instalacja
+### Installation
 
-### Lokalna instalacja
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd backend
+   ```
 
-1. Sklonuj repozytorium
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Setup environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+4. **Setup PostgreSQL database**
+   ```bash
+   # Create a new database
+   createdb log_analyzer
+   ```
+
+5. **Run database migrations**
+   ```bash
+   npm run db:migrate
+   ```
+
+6. **Start the server**
+   ```bash
+   # Development mode
+   npm run dev
+   
+   # Production mode
+   npm run build
+   npm start
+   ```
+
+Server will be running at `http://localhost:5000`
+
+## 📚 API Documentation
+
+### Authentication Endpoints
+
+#### Register
+```
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePassword123!",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+```
+
+#### Login
+```
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePassword123!"
+}
+```
+
+#### Get Current User
+```
+GET /api/auth/me
+Authorization: Bearer <token>
+```
+
+### Log Endpoints
+
+#### Upload Log
+```
+POST /api/logs/upload
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "fileName": "error.log",
+  "fileType": "log",
+  "content": "[ERROR] Database connection failed..."
+}
+```
+
+#### Get Logs
+```
+GET /api/logs?page=1&limit=10
+Authorization: Bearer <token>
+```
+
+#### Analyze Log
+```
+POST /api/logs/:id/analyze
+Authorization: Bearer <token>
+```
+
+### Analysis Endpoints
+
+#### Get Analyses
+```
+GET /api/analyses?page=1&limit=10&minConfidence=0.8
+Authorization: Bearer <token>
+```
+
+#### Get Analysis Details
+```
+GET /api/analyses/:id
+Authorization: Bearer <token>
+```
+
+### Remediation Endpoints
+
+#### Get Pending Remediations
+```
+GET /api/remediations/pending?page=1&limit=10
+Authorization: Bearer <token>
+```
+
+#### Approve Remediation
+```
+POST /api/remediations/:id/approve
+Authorization: Bearer <token>
+```
+
+#### Execute Remediation
+```
+POST /api/remediations/:id/execute
+Authorization: Bearer <token>
+```
+
+### Report Endpoints
+
+#### Generate Report
+```
+POST /api/reports/:analysisId/generate
+Authorization: Bearer <token>
+```
+
+#### Download Report
+```
+GET /api/reports/:reportFilename/download
+Authorization: Bearer <token>
+```
+
+## 🔐 Security Features
+
+- **JWT Authentication** - Secure token-based authentication
+- **Password Hashing** - bcryptjs with configurable rounds
+- **Rate Limiting** - Prevent brute force attacks
+- **CORS** - Cross-origin resource sharing configuration
+- **Helmet** - Security headers
+- **Input Validation** - Joi schema validation
+- **Audit Logging** - Complete action tracking
+- **Error Handling** - Secure error messages
+
+## 📝 Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|----------|
+| NODE_ENV | Environment | development |
+| PORT | Server port | 5000 |
+| DB_HOST | Database host | localhost |
+| DB_PORT | Database port | 5432 |
+| DB_USERNAME | Database user | postgres |
+| DB_PASSWORD | Database password | - |
+| DB_DATABASE | Database name | log_analyzer |
+| JWT_SECRET | JWT secret key | - |
+| OPENAI_API_KEY | OpenAI API key | - |
+| CORS_ORIGIN | Allowed origins | http://localhost:3000 |
+| UPLOAD_DIR | File upload directory | ./uploads |
+| MAX_FILE_SIZE | Max file size (bytes) | 10485760 |
+
+## 🧪 Testing
+
 ```bash
-git clone https://github.com/MichalRzeszot/Log_Analiyzer-.git
-cd backend
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm test:watch
+
+# Generate coverage report
+npm test:coverage
 ```
 
-2. Zainstaluj zależności
+## 📊 Database Schema
+
+### Users Table
+- id (PK)
+- email (UNIQUE)
+- passwordHash
+- firstName
+- lastName
+- role (admin | user)
+- isActive
+- createdAt
+- updatedAt
+
+### Logs Table
+- id (PK)
+- userId (FK)
+- fileName
+- fileType (txt | log | json)
+- content
+- filePath
+- fileSize
+- status (uploaded | analyzing | analyzed | error)
+- errorMessage
+- createdAt
+- updatedAt
+
+### Analyses Table
+- id (PK)
+- logId (FK, UNIQUE)
+- userId (FK)
+- detectedProblem
+- rootCause
+- confidenceLevel
+- proposedActions (JSONB)
+- aiResponse (JSONB)
+- analysisTime
+- status
+- createdAt
+
+### RemediationActions Table
+- id (PK)
+- analysisId (FK)
+- userId (FK)
+- actionType
+- actionDescription
+- parameters (JSONB)
+- status (pending | approved | executing | executed | failed)
+- executedAt
+- result (JSONB)
+- createdAt
+
+### AuditLogs Table
+- id (PK)
+- userId (FK, nullable)
+- action
+- resourceType
+- resourceId
+- ipAddress
+- userAgent
+- details (JSONB)
+- createdAt
+
+## 🔄 Workflow Example
+
+1. **User Registration** → `/api/auth/register`
+2. **User Login** → `/api/auth/login` (get JWT token)
+3. **Upload Log** → `/api/logs/upload`
+4. **Analyze Log** → `/api/logs/:id/analyze` (triggers OpenAI)
+5. **View Analysis** → `/api/analyses/:id`
+6. **Review Remediations** → `/api/remediations/pending`
+7. **Approve Action** → `/api/remediations/:id/approve`
+8. **Execute Action** → `/api/remediations/:id/execute`
+9. **Generate Report** → `/api/reports/:analysisId/generate`
+10. **Download Report** → `/api/reports/:filename/download`
+
+## 🐛 Troubleshooting
+
+### Database Connection Error
 ```bash
-npm install
+# Verify PostgreSQL is running
+psql -U postgres
+
+# Check .env variables
+cat .env
 ```
 
-3. Skonfiguruj zmienne środowiskowe
+### OpenAI API Error
 ```bash
-cp .env.example .env
-```
-Edytuj `.env` i uzupełnij wartości dla Twojego środowiska.
+# Verify API key
+echo $OPENAI_API_KEY
 
-4. Uruchom migracje bazy danych
+# Test API connection
+curl https://api.openai.com/v1/models -H "Authorization: Bearer $OPENAI_API_KEY"
+```
+
+### Port Already in Use
 ```bash
-npm run db:migrate
+# Change PORT in .env
+PORT=5001
 ```
 
-5. (Opcjonalnie) Zasilij bazę danych
-```bash
-npm run db:seed
-```
+## 📈 Performance Optimization
 
-6. Uruchom serwer deweloperski
-```bash
-npm run dev
-```
+- Database connection pooling
+- Query result caching
+- File upload size limits
+- Rate limiting on all endpoints
+- Request timeout configuration
+- Async/await for non-blocking operations
 
-Serwer będzie dostępny na `http://localhost:3000`
-
-## Uruchomienie z Docker
-
-```bash
-docker-compose up
-```
-
-## Dostępne komendy
-
-- `npm run dev` - Uruchomienie serwera w trybie deweloperskim
-- `npm run build` - Zbudowanie aplikacji
-- `npm start` - Uruchomienie zbudowanej aplikacji
-- `npm test` - Uruchomienie testów
-- `npm run lint` - Analiza kodu
-- `npm run lint:fix` - Naprawianie problemów w kodzie
-- `npm run db:migrate` - Uruchomienie migracji bazy danych
-- `npm run db:seed` - Zasilenie bazy danych
-
-## Struktura projektu
-
-```
-src/
-├── config/          # Konfiguracja aplikacji
-├── controllers/     # Kontrolery obsługujące requesty
-├── services/        # Logika biznesowa
-├── repositories/    # Dostęp do bazy danych
-├── models/          # Modele danych
-├── middleware/      # Middleware Express
-├── utils/           # Funkcje narzędziowe
-├── routes/          # Definicje ścieżek API
-├── database/        # Migracje i seedery
-├── app.ts           # Inicjalizacja Express
-└── server.ts        # Punkt wejścia aplikacji
-```
-
-## Dokumentacja API
-
-Pełna dokumentacja API dostępna jest w pliku `API.md` (wkrótce).
-
-## Bezpieczeństwo
-
-- Hasła są hashowane za pomocą bcryptjs
-- Autentykacja JWT
-- Rate limiting na wszystkich endpointach
-- CORS skonfigurowany
-- Helmet dla bezpieczeństwa HTTP headerów
-- Walidacja danych Joi
-
-## Troubleshooting
-
-### Błąd połączenia z bazą danych
-
-Upewnij się, że:
-- PostgreSQL jest uruchomiony
-- Dane w `.env` są poprawne
-- Baza danych istnieje
-
-### Błędy TypeScript
+## 🚀 Deployment
 
 ```bash
+# Build for production
 npm run build
+
+# Start production server
+NODE_ENV=production npm start
 ```
 
-Sprawdź czy wszystkie błędy typów są naprawione.
+## 📄 License
 
-## Licencja
+MIT License - See LICENSE file for details
 
-MIT
+## 👨‍💼 Author
+
+Your Name
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow the existing code style and add tests for new features.
+
+## 📞 Support
+
+For issues and questions, please create an issue in the repository.
